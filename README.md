@@ -1,1 +1,2 @@
-# VBA_excel_automation
+# Portfolio analityczne - Dawid Wolanin: automatyzacja VBA/Excel
+

@@ -11,10 +11,11 @@ Niniejszy projekt ma na celu zaprezentowanie automatyzacji przykładowych zadań
 
 # Importowanie z pliku txt
 
+
+**Cel kodu**: Ten skrypt importuje dane z jednego lub więcej plików tekstowych, wybranych w oknie dialogowym Windows do nowych arkuszy w aktywnym skoroszycie Excel.
+
 ## Zarys funkcjonalności
 
-**Cel podprocedury (subprocedure)**: Ta podprocedura importuje dane z jednego lub więcej plików tekstowych do nowych arkuszy w aktywnym skoroszycie Excel.
-**Proces:**
 - Wybór pliku: Użytkownik jest proszony o wybranie jednego lub więcej plików .txt za pomocą funkcji (GetFiles), która wyświetla okno dialogowe wyboru plików.
 - Przetwarzanie plików:
     - Dla każdego wybranego pliku:
@@ -80,6 +81,7 @@ Public Sub ImportTextFile()
     Application.ScreenUpdating = True
 End Sub
 
+
 Public Function GetFiles() As Variant
     ' Ta funkcja wyświetla okno dialogowe, które umożliwia użytkownikowi wybranie jednego lub więcej plików .txt do importu.
     ' Zwraca tablicę ścieżek wybranych plików.
@@ -92,14 +94,17 @@ Proces importowania plików *.txt wybranych z okna dialogowego jest inicjowany p
 
 ![txt_import_macro](assets/images/VBA6.jpg)
 
+Tak prezentują się zaimportowane dane do poszczególnych arkuszy, po wywołaniu makra:
+![imported_data](assets/images/VBA7.jpg)
+
 
 # Automatyzacja raportu
-
-## Zarys funkcjonalności
 
 **Cel kodu**
 
 Ten skrypt może być używany do konsolidowania i formatowania danych z wielu arkuszy w jeden raport roczny.
+
+## Zarys funkcjonalności
 
 - LoopYearlyReport: Iteruje przez wszystkie arkusze, z wyłączeniem arkusza z raportem rocznym "YEARLY REPORT". Dla każdego arkusza sprawdza, czy zawiera dane, wstawia i formatuje nagłówki, automatyzuje sumowanie w określonej kolumnie, a następnie kopiuje dane do arkusza "YEARLY REPORT".
 - AutomateTotalSUM: Dodaje formułę sumy do kolumny "F" w każdym arkuszu, sumując wszystkie wartości od wiersza 2 do ostatniego wiersza z danymi.
@@ -166,6 +171,7 @@ Sub LoopYearlyReport()
     
 End Sub
 
+
 Public Sub AutomateTotalSUM()
     ' Deklarowanie zmiennych
     Dim lastCell As String   ' Zmienna do przechowywania adresu ostatniej komórki w kolumnie z danymi
@@ -185,6 +191,7 @@ Public Sub AutomateTotalSUM()
     ' Wprowadź formułę SUMA w wybranej komórce, sumując zakres od F2 do ostatniej komórki z danymi
     ActiveCell.Value = "=SUM(F2:" & lastCell & ")"
 End Sub
+
 
 Sub InsertHeaders()
 `
@@ -213,6 +220,7 @@ Sub InsertHeaders()
     ' Przenieś kursor do komórki A2, aby przygotować arkusz do wprowadzania danych
     Range("A2").Select
 End Sub
+
 
 Sub FormatHeaders()
 '
@@ -269,8 +277,116 @@ End Sub
 
 
 ```
+Utworzony raport roczny, po wypełnieniu powyższych podprocedur prezentuje się tak:
+
+![yearly_report](assets/images/VBA8.jpg)
 
 
+
+# Formularz użytkownika UserForm
+
+**Cel kodu**
+
+W tym skrypcie zapisane są procedury, według których funkcjonuje formularz użytkownika UserForm. Formularz ten jest wykorzystywany do dodawania arkuszy, uruchamiania raportów i nawigacji między arkuszami w skoroszycie Excel:
+
+![UserForm](assets/images/VBA1.jpg)
+
+
+## Zarys funkcjonalności
+
+- btnAddWorksheet_Click: ta podprocedura jest wywoływana po kliknięciu przycisku dodawania arkusza "Add Worksheet". Dodaje nowy arkusz przed pierwszym, monituje użytkownika o podanie nazwy oraz obsługuje błędy, takie jak nieprawidłowe nazwy, poprzez ponowne próbowanie lub usuwanie nieprawidłowego arkusza.
+![add_worksheet](assets/images/VBA4.jpg)
+
+- btnRunReport_Click: ta podprocedura jest powiązana z przyciskiem "Run Report" i wywołuje procedurę LoopYearlyReport, opisaną we wcześniejszym punkcie niniejszego projektu, służącą do konsolidacji danych do raportu rocznego oraz formatowania zebranych danych w arkuszu.
+![run_report](assets/images/VBA5.jpg)
+
+- UserForm_Initialize: ta podprocedura jest uruchamiana po pierwszym otwarciu formularza użytkownika. Wypełnia pole "ComboBox" nazwami wszystkich arkuszy w skoroszycie, umożliwiając użytkownikowi wybranie jednego.
+
+- cboWhichSheet_Change: ta podprocedura jest wykonywana, gdy użytkownik wybiera inny element w polu "ComboBox". Zmienia aktywny arkusz na wybrany przez użytkownika.
+![combo_box](assets/images/VBA3.jpg)
+
+
+```vba
+Private Sub btnAddWorksheet_Click()
+    ' Ta procedura uruchamia się po kliknięciu przycisku "Dodaj Arkusz".
+    ' Dodaje nowy arkusz, umożliwia użytkownikowi nadanie mu nazwy oraz obsługuje nieprawidłowe nazwy.
+    
+    ' Deklaracja zmiennej do przechowywania odpowiedzi użytkownika w sekcji obsługi błędów
+    Dim tryAgain As Integer
+    
+    ' Ustawienie obsługi błędów, która przechodzi do 'errHandler' w przypadku wystąpienia błędu
+    On Error GoTo errHandler
+    
+    ' Dodanie nowego arkusza przed pierwszym arkuszem w skoroszycie
+    Worksheets.Add before:=Worksheets(1)
+    
+    ' Wyświetlenie okna dialogowego, w którym użytkownik może wpisać nazwę dla nowego arkusza
+    ActiveSheet.Name = InputBox("Proszę wprowadzić nową nazwę arkusza")
+    
+    ' Jeśli nie wystąpił błąd, procedura kończy działanie w tym miejscu
+    Exit Sub
+    
+' Sekcja obsługi błędów:
+errHandler:
+    ' Wyświetlenie okna dialogowego informującego użytkownika o nieprawidłowej nazwie arkusza
+    tryAgain = MsgBox("Nieprawidłowa nazwa arkusza", vbYesNo)
+    
+    ' Sprawdzenie, czy użytkownik wybrał "Tak" (co zwraca wartość 6)
+    If tryAgain = 6 Then
+        ' Jeśli użytkownik wybierze "Tak", uruchom ponownie całą procedurę, aby poprosić o nową nazwę
+        btnAddWorksheet_Click
+    Else
+        ' Jeśli użytkownik wybierze "Nie", przystąp do usunięcia arkusza z nieprawidłową nazwą
+        ' Wyłączenie okna dialogowego potwierdzającego zwykle pojawiającego się przy usuwaniu arkusza
+        Application.DisplayAlerts = False
+        
+        ' Usunięcie aktywnego arkusza (który właśnie został utworzony, ale ma nieprawidłową nazwę)
+        ActiveSheet.Delete
+        
+        ' Ponowne włączenie alertów
+        Application.DisplayAlerts = True
+    End If
+End Sub
+
+
+Private Sub btnRunReport_Click()
+    ' Ta procedura uruchamia się po kliknięciu przycisku "Uruchom Raport".
+    ' Uruchamia procedurę LoopYearlyReport, konsolidującą i formatującą dane w raporcie rocznym.
+    
+    LoopYearlyReport
+End Sub
+
+
+Private Sub UserForm_Initialize()
+    ' Ta procedura uruchamia się podczas inicjalizacji formularza użytkownika (tj. gdy zostanie on po raz pierwszy otwarty).
+    ' Wypełnia pole ComboBox (cboWhichSheet) nazwami wszystkich arkuszy w skoroszycie.
+    
+    ' Deklaracja zmiennej do pętli przez wszystkie arkusze
+    Dim i As Integer
+    
+    ' Inicjalizacja licznika pętli na 1 (pierwszy arkusz)
+    i = 1
+    
+    ' Pętla przez wszystkie arkusze w skoroszycie
+    Do While i <= Worksheets.Count
+        ' Dodanie nazwy każdego arkusza do pola kombi
+        Me.cboWhichSheet.AddItem Worksheets(i).Name
+        
+        ' Zwiększenie licznika, aby przejść do następnego arkusza
+        i = i + 1
+    Loop
+End Sub
+
+
+Private Sub cboWhichSheet_Change()
+    ' Ta procedura uruchamia się, gdy użytkownik wybierze inną pozycję w polu ComboBox (rozwijanym).
+    ' Wybiera arkusz odpowiadający wybranej pozycji w polu ComboBox.
+    
+    Worksheets(Me.cboWhichSheet.Value).Select
+End Sub
+
+
+```
 
 
 

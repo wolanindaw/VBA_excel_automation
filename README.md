@@ -9,6 +9,26 @@ Niniejszy projekt ma na celu zaprezentowanie automatyzacji przykładowych zadań
 - [Formularz użytkownika UserForm](#userform)
 
 
+# Importowanie z pliku txt
+
+## Zarys funkcjonalności
+**Cel podprocedury (subprocedure)**: Ta podprocedura importuje dane z jednego lub więcej plików tekstowych do nowych arkuszy w aktywnym skoroszycie Excel.
+**Proces:**
+- Wybór pliku: Użytkownik jest proszony o wybranie jednego lub więcej plików .txt za pomocą funkcji (GetFiles), która wyświetla okno dialogowe wyboru plików.
+- Przetwarzanie plików:
+    - Dla każdego wybranego pliku:
+    - Plik jest otwierany jako skoroszyt (TextFile).
+    - Cały obszar danych z pierwszego arkusza pliku tekstowego jest kopiowany.
+    - Do oryginalnego skoroszytu dodawany jest nowy arkusz, a skopiowane dane są do niego wklejane.
+    - Nowy arkusz jest przenoszony na określoną pozycję (za wcześniej zaimportowane arkusze) i zmieniana jest jego nazwa na nazwę pliku tekstowego (bez rozszerzenia .txt).
+    - Skoroszyt pliku tekstowego jest następnie zamykany bez zapisywania.
+    - Aktualizacja ekranu: Aktualizacja ekranu jest wyłączona podczas procesu importu, aby zwiększyć wydajność i uniknąć migotania. Zostaje włączona po zakończeniu.
+
+**Stworzenie funkcji (GetFiles)**:
+**Cel**: Ta funkcja wyświetla okno dialogowe, w którym użytkownik może wybrać jeden lub więcej plików tekstowych do importu.
+Wynik: Funkcja zwraca tablicę ścieżek plików wybranych przez użytkownika. Jeśli użytkownik anuluje wybór, funkcja zwraca wartość False.
+
+
 ```vba
 Public Sub ImportTextFile()
     ' Ta podprocedura importuje jeden lub więcej plików .txt do nowych arkuszy w bieżącym skoroszycie Excel.
@@ -66,3 +86,8 @@ Public Function GetFiles() As Variant
     GetFiles = Application.GetOpenFilename(Title:="Select File(s) to Import", MultiSelect:=True)
 End Function
 ```
+
+Proces importowania plików *.txt wybranych z okna dialogowego jest inicjowany przy naciśnięciu przycisku z przypisanym odpowiednim makrem:
+![txt_import_macro](assets/images/VBA6.jpg)
+
+

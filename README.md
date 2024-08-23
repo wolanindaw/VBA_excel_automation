@@ -95,6 +95,7 @@ Proces importowania plików *.txt wybranych z okna dialogowego jest inicjowany p
 ![txt_import_macro](assets/images/VBA6.jpg)
 
 Tak prezentują się zaimportowane dane do poszczególnych arkuszy, po wywołaniu makra:
+
 ![imported_data](assets/images/VBA7.jpg)
 
 
@@ -295,14 +296,17 @@ W tym skrypcie zapisane są procedury, według których funkcjonuje formularz u�
 ## Zarys funkcjonalności
 
 - btnAddWorksheet_Click: ta podprocedura jest wywoływana po kliknięciu przycisku dodawania arkusza "Add Worksheet". Dodaje nowy arkusz przed pierwszym, monituje użytkownika o podanie nazwy oraz obsługuje błędy, takie jak nieprawidłowe nazwy, poprzez ponowne próbowanie lub usuwanie nieprawidłowego arkusza.
+
 ![add_worksheet](assets/images/VBA4.jpg)
 
 - btnRunReport_Click: ta podprocedura jest powiązana z przyciskiem "Run Report" i wywołuje procedurę LoopYearlyReport, opisaną we wcześniejszym punkcie niniejszego projektu, służącą do konsolidacji danych do raportu rocznego oraz formatowania zebranych danych w arkuszu.
+
 ![run_report](assets/images/VBA5.jpg)
 
 - UserForm_Initialize: ta podprocedura jest uruchamiana po pierwszym otwarciu formularza użytkownika. Wypełnia pole "ComboBox" nazwami wszystkich arkuszy w skoroszycie, umożliwiając użytkownikowi wybranie jednego.
 
 - cboWhichSheet_Change: ta podprocedura jest wykonywana, gdy użytkownik wybiera inny element w polu "ComboBox". Zmienia aktywny arkusz na wybrany przez użytkownika.
+
 ![combo_box](assets/images/VBA3.jpg)
 
 

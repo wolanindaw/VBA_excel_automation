@@ -66,6 +66,7 @@ Public Sub ImportTextFile()
         
         ' Przenieś nowy arkusz do właściwej pozycji w skoroszycie
         ' Jest umieszczany za arkuszem o indeksie (i + 1), utrzymując kolejność importowanych plików
+        ActiveSheet.Move after:=Worksheets(i + 1)
         
         ' Zmień nazwę nowego arkusza tak, aby odpowiadała nazwie oryginalnego pliku tekstowego, usuwając rozszerzenie ".txt"
         ActiveSheet.Name = Replace(TextFile.Name, ".txt", "")
